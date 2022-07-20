@@ -52,6 +52,40 @@ receivers:
 * A route can have many sub-routes, forming a tree.
 * Routing starts from the root route.
 
+
+### Loki
+[Grafana Loki](https://grafana.com/oss/loki/) is a set of components that can be composed into a fully featured logging stack.
+
+Unlike other logging systems, Loki is built around the idea of only indexing metadata about your logs: labels (just like Prometheus labels). Log data itself is then compressed and stored in chunks in object stores such as S3 or GCS, or even locally on the filesystem. A small index and highly compressed chunks simplifies the operation and significantly lowers the cost of Loki.
+
+```yaml
+    logLevel: error
+    logFormat: json
+    trottlePeriod: 10
+    route:
+      routes:
+        - match:
+            - receiver: "loki"
+    receivers:
+      - name: "loki"
+        webhook:
+          endpoint: 'http://loki-gateway/loki/api/v1/push'
+          headers:
+            Content-Type: application/json
+            User-Agent: kube-event-exporter
+          layout:
+            streams:
+              - stream:
+                  kind: kube-event
+                  namespace: '{{ .InvolvedObject.Namespace }}'
+                  type: '{{ .Type }}'
+                values:
+                  - - "{{ mul .GetTimestampMs 1000000 }}"
+                    - 'level={{ lower .Type | replace "normal" "notice" }} namespace={{ .InvolvedObject.Namespace }} object={{ .InvolvedObject.Kind }}/{{ .InvolvedObject.Name }} reason={{ .Reason }} message={{ quote .Message }}'
+```
+
+
+
 ### Opsgenie
 
 [Opsgenie](https://www.opsgenie.com) is an alerting and on-call management tool. kubernetes-event-exporter can push to

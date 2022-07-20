@@ -19,10 +19,3 @@ USER nonroot
 
 ENTRYPOINT ["/kubernetes-event-exporter"]
 
-
-#########################
-# Vulnerability scanning
-#########################
-FROM prod as scan
-COPY --from=aquasec/trivy:latest /usr/local/bin/trivy /usr/local/bin/trivy
-RUN trivy filesystem --exit-code 1 --severity CRITICAL --no-progress /

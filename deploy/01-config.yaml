@@ -7,10 +7,24 @@ data:
   config.yaml: |
     logLevel: error
     logFormat: json
+    trottlePeriod: 10
     route:
       routes:
         - match:
-            - receiver: "dump"
+            - receiver: "loki"
     receivers:
-      - name: "dump"
-        stdout: {}
+      - name: "loki"
+        webhook:
+          endpoint: 'http://loki-gateway/loki/api/v1/push'
+          headers:
+            Content-Type: application/json
+            User-Agent: kube-event-exporter
+          layout:
+            streams:
+              - stream:
+                  kind: kube-event
+                  namespace: '{{ .InvolvedObject.Namespace }}'
+                  type: '{{ .Type }}'
+                values:
+                  - - "{{ mul .GetTimestampMs 1000000 }}"
+                    - 'level={{ lower .Type | replace "normal" "notice" }} namespace={{ .InvolvedObject.Namespace }} object={{ .InvolvedObject.Kind }}/{{ .InvolvedObject.Name }} reason={{ .Reason }} message={{ quote .Message }}'

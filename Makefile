@@ -9,17 +9,13 @@ build: IMG_NAME=exporter
 build: DOCKERCONTEXT=.
 build: DOCKERFILE=./Dockerfile
 build: IMG=${DOCKER_REGISTRY_DOMAIN}/${DOCKER_REGISTRY_PATH}/${REPOSITORY_PATH}/$(IMG_NAME)
-build: check-container build-container push-container
+build: build-container push-container
 
-
-check-container:
-	docker build --rm \
-		--target scan \
-		-f ${DOCKERFILE} ${DOCKERCONTEXT}
 
 build-container:
 	docker build \
 		--pull \
+		--platform=linux/amd64 \
 		--target prod \
 		-t ${IMG}:${GIT_COMMIT} \
 		-t ${IMG}:latest \
