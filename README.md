@@ -53,7 +53,8 @@ receivers:
 * Routing starts from the root route.
 
 
-### Loki
+
+### Loki
 
 [Grafana Loki](https://grafana.com/oss/loki/) is a set of components that can be composed into a fully featured logging stack.
 
