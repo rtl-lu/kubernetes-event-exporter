@@ -5,9 +5,9 @@ metadata:
   namespace: monitoring
 data:
   config.yaml: |
-    logLevel: error
+    logLevel: info
     logFormat: json
-    trottlePeriod: 10
+    trottlePeriod: 20
     route:
       routes:
         - match:
