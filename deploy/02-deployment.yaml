@@ -14,7 +14,13 @@ spec:
       serviceAccountName: event-exporter
       containers:
         - name: event-exporter
+<<<<<<< HEAD
           image: ghcr.io/rtl-lu/kubernetes-event-exporter/exporter:latest
+=======
+          # The good practice would be to pin the version. This is just a reference so that we don't
+          # have to update this file in each release.
+          image: ghcr.io/resmoio/kubernetes-event-exporter:latest
+>>>>>>> 91d7d8fa80e17309fd9dad620fa1d5bb111f159a
           imagePullPolicy: IfNotPresent
           args:
             - -conf=/data/config.yaml
